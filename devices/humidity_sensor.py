@@ -7,6 +7,9 @@ from random import random
 class HumiditySensor(Sensor):
     """ Humidity sensor class, extends Sensor class implementing get_status method """
 
+    # Relative Humidity % Unit
+    HUMIDITY_UNIT = "%RH"
+
     def __init__(self, device_id, initial_humidity=50):
         """ Initialize the humidity sensor with a devices ID and an initial humidity level """
         super().__init__(device_id, "HumiditySensor", "Acme Inc.")
@@ -16,6 +19,9 @@ class HumiditySensor(Sensor):
 
         # Set the timestamp of the last measurement in milliseconds
         self.timestamp = int(time.time() * 1000)
+
+        # Set Humidity Unit to Relative Humidity % Unit
+        self.unit = HumiditySensor.HUMIDITY_UNIT
 
     def update_measurement(self):
         """ Update the humidity measurement of the sensor in a range of 40% to 60% with a random increment """
@@ -41,6 +47,7 @@ class HumiditySensor(Sensor):
             "device_type": self.device_type,
             "device_manufacturer": self.device_manufacturer,
             "value": self.value,
+            "unit": self.unit,
             "timestamp": self.timestamp
         }
 

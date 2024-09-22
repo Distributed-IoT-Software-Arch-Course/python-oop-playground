@@ -15,6 +15,9 @@ class Sensor(Device):
         # Set the timestamp to None, subclasses should set the timestamp when updating the measurement
         self.timestamp = None
 
+        # Set the Unit associated to sensor measurements
+        self.unit = None
+
     def update_measurement(self):
         """ Update the measurement of the sensor, this method should be overridden by subclasses """
         raise NotImplementedError("This method should be overridden by subclasses")
