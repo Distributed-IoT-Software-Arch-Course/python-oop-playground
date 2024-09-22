@@ -5,7 +5,7 @@ from random import random
 
 
 class HumiditySensor(Sensor):
-    """ Humidity sensor class, extends Sensor class implementing get_status method """
+    """ Humidity sensor class, extends Sensor class implementing required methods defined in the Sensor Class """
 
     # Relative Humidity % Unit
     HUMIDITY_UNIT = "%RH"
@@ -34,8 +34,6 @@ class HumiditySensor(Sensor):
         else:
             self.value -= 10 * (random() + 0.5)
 
-        # Update the humidity measurement with a random increment
-        self.value += (random() - 0.5) * 2
 
         # Set the timestamp of the last measurement in milliseconds
         self.timestamp = int(time.time() * 1000)
