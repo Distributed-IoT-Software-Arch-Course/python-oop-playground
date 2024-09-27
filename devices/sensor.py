@@ -1,5 +1,5 @@
 from .device import Device
-
+import json
 
 class Sensor(Device):
     """ Base class for sensors """
@@ -22,6 +22,13 @@ class Sensor(Device):
         """ Update the measurement of the sensor, this method should be overridden by subclasses """
         raise NotImplementedError("This method should be overridden by subclasses")
 
-    def get_json_description(self):
-        """ Returns a JSON representation of the Sensor, this method should be overridden by subclasses """
-        raise NotImplementedError("This method should be overridden by subclasses")
+    def get_json_measurement(self):
+        """ Returns a JSON Measurement of the humidity sensor """
+        result_dict = {
+            "device_id": self.device_id,
+            "value": self.value,
+            "unit": self.unit,
+            "timestamp": self.timestamp
+        }
+
+        return json.dumps(result_dict)

@@ -37,16 +37,3 @@ class HumiditySensor(Sensor):
 
         # Set the timestamp of the last measurement in milliseconds
         self.timestamp = int(time.time() * 1000)
-
-    def get_json_description(self):
-        """ Returns a JSON representation of the humidity sensor """
-        result_dict = {
-            "device_id": self.device_id,
-            "device_type": self.device_type,
-            "device_manufacturer": self.device_manufacturer,
-            "value": self.value,
-            "unit": self.unit,
-            "timestamp": self.timestamp
-        }
-
-        return json.dumps(result_dict)

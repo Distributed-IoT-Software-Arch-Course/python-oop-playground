@@ -32,15 +32,3 @@ class SmartLight(Actuator):
             self.status = payload
         else:
             raise ValueError("Unsupported action type")
-
-    def get_json_description(self):
-        """ Returns a JSON String representing the smart light and its status"""
-        result_dict = {
-            "device_id": self.device_id,
-            "device_type": self.device_type,
-            "device_manufacturer": self.device_manufacturer,
-            "status": self.status,
-            "timestamp": self.timestamp
-        }
-
-        return json.dumps(result_dict)
