@@ -14,6 +14,14 @@ a central system to collect and manage data.
 
 **Note:** The scenario is simplified without any kind of communication, and everything is running within the same process. 
 
+Playground Sections:
+
+- [JSON Introduction](#json-introduction-)
+- [Base Classes](#base-classes)
+- [Device Class](#device-class)
+- [Sensor Class](#sensor-class)
+- [Actuator Class](#actuator-class)
+
 ## Json Introduction 
 
 JSON (JavaScript Object Notation) is a lightweight data-interchange format that is easy for humans to read and write, and easy for machines to parse and generate. 
@@ -247,7 +255,7 @@ def get_json_measurement(self):
     return json.dumps(result_dict)
 ```
 
-### Actuator
+### Actuator Class
 
 The `Actuator` class has the responsibility to map the properties and behaviours of the Actuator in our system and application.
 
