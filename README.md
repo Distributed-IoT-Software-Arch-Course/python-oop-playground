@@ -718,7 +718,7 @@ Create a Directory Structure: Organize your files into directories based on thei
 smart_home_project/
 ├── data
     ├── __init__.py
-    ├── data_manager.py
+    ├── storage_manager.py
 ├── devices/
 │   ├── __init__.py
 │   ├── actuator.py
