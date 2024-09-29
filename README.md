@@ -26,6 +26,7 @@ Playground Sections:
 - [Smart Home](#smart-home)
 - [Main Application](#main-application)
 - [File Organization & Modules](#file-organization--modules)
+- [Managing Types in Python](#managing-types-in-python)
 
 ## Json Introduction 
 
