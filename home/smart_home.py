@@ -1,5 +1,7 @@
 import time
 from random import random
+
+from devices.device import Device
 from devices.sensor import Sensor
 from devices.smart_light import SmartLight
 
@@ -7,28 +9,54 @@ from devices.smart_light import SmartLight
 class SmartHome:
     """ Smart home class that manages devices and data """
 
-    def __init__(self, data_manager, home_id, latitude, longitude):
+    def __init__(self, storage_manager, home_id, latitude, longitude):
         """Initialize the smart home with an empty list of devices and a data manager """
-        self.data_manager = data_manager
+        self.data_manager = storage_manager
         self.home_id = home_id
         self.latitude = latitude
         self.longitude = longitude
 
+        # Initialize the internal structure for managing device references
+        self.device_dict = {}
+
     def add_device(self, device):
         """ Add a new devices to the smart home """
-        self.data_manager.add_device(device)
+
+        # If the Class type is correct
+        if isinstance(device, Device):
+            # Add the Device to the internal structure
+            self.device_dict[device.device_id] = device
+
+            # Save the Device Description through the Data Manager
+            self.data_manager.store_device_description(device.device_id, device.get_json_description())
+        else:
+            raise TypeError("Expected Device Class ! Error a different type has been provided !")
+
 
     def remove_device(self, device_id):
         """ Remove a devices from the smart home """
-        self.data_manager.remove_device(device_id)
+
+        if device_id in self.device_dict.keys():
+            ## Remove the device from the internal structure and from the storage
+            del self.device_dict[device_id]
+            self.data_manager.remove_device_description(device_id)
+        else:
+            print(f'Warning ! Device with Id: {device_id} not found ... nothing to remove')
 
     def get_device(self, device_id):
         """ Get a devices by its ID """
-        return self.data_manager.get_device(device_id)
+        if device_id in self.device_dict.keys():
+            return self.device_dict[device_id]
+        else:
+            return None
 
     def get_all_devices(self):
         """ Get all devices in the smart home """
-        return self.data_manager.devices
+        return self.device_dict
+
+    def get_all_device_descriptions(self):
+        """ Return all the stored Device Descriptions """
+        return self.data_manager.get_all_device_descriptions()
 
     def get_all_measurements(self):
         """ Get all measurements for all devices """
@@ -43,7 +71,7 @@ class SmartHome:
             print("\nWaiting for 1 seconds...")
             time.sleep(1)
 
-            for device in self.get_all_devices():
+            for device in self.get_all_devices().values():
 
                 # Here we can check if the devices is a sensor and update the measurement with Sensor base class
                 if isinstance(device, Sensor):

@@ -1,4 +1,4 @@
-from data.data_manager import DataManager
+from data.storage_manager import StorageManager
 from home.smart_home import SmartHome
 from devices.sensor import Sensor
 from devices.actuator import Actuator
@@ -10,8 +10,11 @@ from devices.smart_light import SmartLight
 # Main function to test the smart home
 if __name__ == '__main__':
 
+    # Create the DataManager
+    storage_manager = StorageManager()
+
     # Create the smart home
-    my_smart_home = SmartHome(DataManager(), "SH001", 37.7749, -122.4194)
+    my_smart_home = SmartHome(storage_manager, "SH001", 37.7749, -122.4194)
 
     # Add devices
     temp_sensor = TemperatureSensor(device_id=1)
@@ -21,6 +24,11 @@ if __name__ == '__main__':
     my_smart_home.add_device(temp_sensor)
     my_smart_home.add_device(humidity_sensor)
     my_smart_home.add_device(smart_light)
+
+    # Print all registered Device Descriptions
+    device_descriptions_dict = my_smart_home.get_all_device_descriptions()
+    for device_id, device_description in device_descriptions_dict.items():
+        print(f"Registered Device Description - DeviceId: {device_id} - Description: {device_description}")
 
     # Get Initial Status of all devices
     print("\nInitial Status of IoT Devices:")
@@ -40,8 +48,3 @@ if __name__ == '__main__':
     for device_id, device_measurements in measurements.items():
         for measurement in device_measurements:
             print(f"Device {device_id} - Measurement: {measurement}")
-
-    # Print Json Description of all devices
-    print("\nJson Description of all devices:")
-    for device in my_smart_home.get_all_devices():
-        print(device.get_json_description())

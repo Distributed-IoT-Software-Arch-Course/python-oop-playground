@@ -1,6 +1,5 @@
 from .actuator import Actuator
 import time
-import json
 
 class SmartLight(Actuator):
     """ Class representing a smart light devices """

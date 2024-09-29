@@ -1,5 +1,4 @@
 import time
-import json
 from .sensor import Sensor
 from random import random
 
