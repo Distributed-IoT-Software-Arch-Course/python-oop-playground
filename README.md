@@ -17,6 +17,7 @@ a central system to collect and manage data.
 Playground Sections:
 
 - [JSON Introduction](#json-introduction-)
+- [File Organization & Modules](#file-organization--modules)
 - [Base Classes](#base-classes)
 - [Device Class](#device-class)
 - [Sensor Class](#sensor-class)
@@ -25,7 +26,6 @@ Playground Sections:
 - [Storage Management](#storage-management)
 - [Smart Home](#smart-home)
 - [Main Application](#main-application)
-- [File Organization & Modules](#file-organization--modules)
 - [Managing Types in Python](#managing-types-in-python)
 
 ## Json Introduction 
@@ -141,7 +141,53 @@ print(python_dict["age"])    # Output: 25
 print(python_dict["city"])   # Output: Los Angeles
 ```
 
-## Base Classes
+## File Organization & Modules
+
+To organize your classes and files into different folders, you can follow these steps:  
+Create a Directory Structure: Organize your files into directories based on their functionality. For example:  
+
+```text
+smart_home_project/
+├── data
+    ├── __init__.py
+    ├── storage_manager.py
+├── devices/
+│   ├── __init__.py
+│   ├── actuator.py
+│   ├── sensor.py
+│   ├── smart_light.py
+├── main.py
+├── smart_home.py
+└── README.md
+```
+
+The `__init__.py` file is used to mark a directory as a Python package. 
+This allows you to import modules from that directory. 
+Here are the main reasons why you need an `__init__.py` file:  
+
+- **Package Initialization:** It can be used to execute initialization code for the package or set the __all__ variable to control what is imported when from package import * is used.  
+- **Namespace Management:** It helps in managing the namespace of the package, ensuring that the modules within the package can be imported correctly.  
+- **Compatibility:** In older versions of Python (before 3.3), the presence of __init__.py was required to recognize a directory as a package. Although it is not strictly necessary in Python 3.3 and later, it is still a good practice to include it for compatibility and clarity.
+
+After that you have to update imports adjusting the import statements in your files to reflect the new directory structure.
+For example in the `main.py` we will have an updated import for SmartLight class:
+
+```python
+from data.storage_manager import StorageManager
+from home.smart_home import SmartHome
+from devices.smart_light import SmartLight
+
+[...]
+```
+
+If you have an import from a different class within the same directory you should use a relative import
+like the following statement: 
+
+```python
+from .device import Device
+```
+
+## Project Base Classes
 
 The basic classes are:
 
@@ -709,52 +755,6 @@ for device in my_smart_home.get_all_devices():
   print(device.get_json_description())
 ```
 
-## File Organization & Modules
-
-To organize your classes and files into different folders, you can follow these steps:  
-Create a Directory Structure: Organize your files into directories based on their functionality. For example:  
-
-```text
-smart_home_project/
-├── data
-    ├── __init__.py
-    ├── storage_manager.py
-├── devices/
-│   ├── __init__.py
-│   ├── actuator.py
-│   ├── sensor.py
-│   ├── smart_light.py
-├── main.py
-├── smart_home.py
-└── README.md
-```
-
-The `__init__.py` file is used to mark a directory as a Python package. 
-This allows you to import modules from that directory. 
-Here are the main reasons why you need an `__init__.py` file:  
-
-- **Package Initialization:** It can be used to execute initialization code for the package or set the __all__ variable to control what is imported when from package import * is used.  
-- **Namespace Management:** It helps in managing the namespace of the package, ensuring that the modules within the package can be imported correctly.  
-- **Compatibility:** In older versions of Python (before 3.3), the presence of __init__.py was required to recognize a directory as a package. Although it is not strictly necessary in Python 3.3 and later, it is still a good practice to include it for compatibility and clarity.
-
-After that you have to update imports adjusting the import statements in your files to reflect the new directory structure.
-For example in the `main.py` we will have an updated import for SmartLight class:
-
-```python
-from data.storage_manager import StorageManager
-from home.smart_home import SmartHome
-from devices.smart_light import SmartLight
-
-[...]
-```
-
-If you have an import from a different class within the same directory you should use a relative import
-like the following statement: 
-
-```python
-from .device import Device
-```
-
 ## Managing Types in Python
 
 Python is a dynamically typed language, but it supports type hints which can be used to indicate the types of variables, function parameters, and return values. 
@@ -865,3 +865,7 @@ Here are some examples of possible variable types in Python:
 - `dict`: Dictionary (key-value pairs)
 - `set`: Set of unique elements
 - `None`: Special constant representing the absence of a value
+
+**In this playground, type hints have been only mentioned in this README in order to present a more structured code
+and give you and idea of how to use them in your Python projects. In future projects and examples they might be integrated
+in the code to provide a more structured and clear code, so please refer to this section for a brief overview of how to use them.**
