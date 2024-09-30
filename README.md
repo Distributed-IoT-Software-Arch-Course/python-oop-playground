@@ -16,7 +16,7 @@ a central system to collect and manage data.
 
 Playground Sections:
 
-- [JSON Introduction](#json-introduction-)
+- [JSON Introduction](#json-introduction)
 - [File Organization & Modules](#file-organization--modules)
 - [Base Classes](#project-base-classes)
 - [Device Class](#device-class)
@@ -28,7 +28,7 @@ Playground Sections:
 - [Main Application](#main-application)
 - [Managing Types in Python](#managing-types-in-python)
 
-## Json Introduction 
+## Json Introduction
 
 JSON (JavaScript Object Notation) is a lightweight data-interchange format that is easy for humans to read and write, and easy for machines to parse and generate. 
 It is a text format that is completely language-independent, making it ideal for data exchange between different systems.
