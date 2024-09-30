@@ -18,7 +18,7 @@ Playground Sections:
 
 - [JSON Introduction](#json-introduction-)
 - [File Organization & Modules](#file-organization--modules)
-- [Base Classes](#base-classes)
+- [Base Classes](#project-base-classes)
 - [Device Class](#device-class)
 - [Sensor Class](#sensor-class)
 - [Actuator Class](#actuator-class)
