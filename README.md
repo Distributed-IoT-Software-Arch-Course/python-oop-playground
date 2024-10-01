@@ -156,8 +156,10 @@ smart_home_project/
 │   ├── actuator.py
 │   ├── sensor.py
 │   ├── smart_light.py
+├── home/
+│   ├── __init__.py
+│   ├── smart_home.py
 ├── main.py
-├── smart_home.py
 └── README.md
 ```
 
