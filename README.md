@@ -209,8 +209,7 @@ The basic classes are:
     - `timestamp` of the last sample in milliseconds
 - `Actuator`: Base class for all actuators extending `Device` class and adding:
   - Methods:
-    - `invoke_action(action_type, payload)`: method to trigger an action on the actuator specifying the type of action and the payload (e.g., action_type = "switch" and payload = "ON"). 
-    - `get_json_description` method to get the description of the sensor in JSON format
+    - `invoke_action(action_type, payload)`: method to trigger an action on the actuator specifying the type of action and the payload (e.g., action_type = "switch" and payload = "ON").
   - Attributes:
     - `status`: associated to the current status of the actuator
     - `timestamp` of the last action in milliseconds
