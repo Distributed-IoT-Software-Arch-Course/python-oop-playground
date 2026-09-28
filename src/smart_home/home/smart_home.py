@@ -1,9 +1,9 @@
 import time
 from random import random
 
-from devices.device import Device
-from devices.sensor import Sensor
-from devices.smart_light import SmartLight
+from smart_home.devices.device import Device
+from smart_home.devices.sensor import Sensor
+from smart_home.devices.smart_light import SmartLight
 
 
 class SmartHome:

@@ -1,0 +1,20 @@
+[project]
+name = "python-oop-playground"
+version = "0.1.0"
+description = "Python Object-Oriented Programming playground modeling a Smart Home with IoT devices"
+readme = "README.md"
+authors = [
+    { name = "Marco Picone" }
+]
+requires-python = ">=3.12"
+dependencies = []
+
+[project.scripts]
+smart-home = "smart_home.main:main"
+
+[build-system]
+requires = ["uv_build>=0.11.0,<0.12"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "smart_home"

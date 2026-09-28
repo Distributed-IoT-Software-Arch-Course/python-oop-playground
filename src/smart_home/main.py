@@ -1,14 +1,14 @@
-from data.storage_manager import StorageManager
-from home.smart_home import SmartHome
-from devices.sensor import Sensor
-from devices.actuator import Actuator
-from devices.temperature_sensor import TemperatureSensor
-from devices.humidity_sensor import HumiditySensor
-from devices.smart_light import SmartLight
+from smart_home.data.storage_manager import StorageManager
+from smart_home.home.smart_home import SmartHome
+from smart_home.devices.sensor import Sensor
+from smart_home.devices.actuator import Actuator
+from smart_home.devices.temperature_sensor import TemperatureSensor
+from smart_home.devices.humidity_sensor import HumiditySensor
+from smart_home.devices.smart_light import SmartLight
 
 
-# Main function to test the smart home
-if __name__ == '__main__':
+def main():
+    """ Main function to test the smart home """
 
     # Create the DataManager
     storage_manager = StorageManager()
@@ -48,3 +48,7 @@ if __name__ == '__main__':
     for device_id, device_measurements in measurements.items():
         for measurement in device_measurements:
             print(f"Device {device_id} - Measurement: {measurement}")
+
+
+if __name__ == '__main__':
+    main()
