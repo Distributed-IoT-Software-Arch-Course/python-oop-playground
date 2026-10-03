@@ -1,827 +1,182 @@
-# Python Object-Oriented Programming Playground
+<!-- omit in toc -->
+# Python Playground — Python Best Practices, OOP & Use Case Modelling
 
-This is a playground for Python Object Oriented Programming (OOP) concepts. 
-The goal is to provide a hands-on experience with OOP concepts in Python.
+<!-- omit in toc -->
+## Lecture Information
 
-The proposed modeling is associated to a Smart Home with various IoT devices: 
+| **Master's Degree** | Intelligent Internet of Things (D.M.270/04)                                      |
+|---------------------|----------------------------------------------------------------------------------|
+| **Course**          | Intelligent Internet of Things                                                   |
+| **Lecture Title**   | Python Playground — Python Best Practices, OOP & Use Case Modelling              |
+| **Author**          | Prof. Marco Picone (marco.picone@unimore.it)                                     |
+| **License**         | [Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/) | 
 
-- Temperature sensors
-- Humidity sensors
-- Smart lights
+A practical, run-it-live Python learning playground: small, self-contained
+examples organized into progressive tracks, one concept per folder. Every
+`main.py` docstring states what it demonstrates and what to look at while it runs.
 
-The exercise will involve designing data structure, identify classes (and creating them in Python to model these devices, 
-a central system to collect and manage data.
+## Playground structure
 
-**Note:** The scenario is simplified without any kind of communication, and everything is running within the same process. 
+- **[`01-best-practices/`](01-best-practices/)** — Python habits that apply to
+  any code, OOP or not: the `__main__` guard, exceptions, type hints,
+  configuration, logging — see its own [README](01-best-practices/README.md).
+  - [`01-main-guard/`](01-best-practices/01-main-guard/)
+  - [`02-exceptions/`](01-best-practices/02-exceptions/)
+  - [`03-type-hints/`](01-best-practices/03-type-hints/)
+  - [`04-config/`](01-best-practices/04-config/)
+  - [`05-logging/`](01-best-practices/05-logging/)
 
-Playground Sections:
+- **[`02-oop/`](02-oop/)** — object-oriented Python, one pillar per folder: from
+  `class` syntax up to encapsulation, inheritance, polymorphism and abstraction —
+  see its own [README](02-oop/README.md).
+  - [`01-class-basics/`](02-oop/01-class-basics/)
+  - [`02-methods-dunder/`](02-oop/02-methods-dunder/)
+  - [`03-class-static-methods/`](02-oop/03-class-static-methods/)
+  - [`04-encapsulation/`](02-oop/04-encapsulation/)
+  - [`05-inheritance/`](02-oop/05-inheritance/)
+  - [`06-polymorphism/`](02-oop/06-polymorphism/)
+  - [`07-abstraction/`](02-oop/07-abstraction/)
+  - [`08-custom-exceptions/`](02-oop/08-custom-exceptions/)
 
-- [Getting Started with uv](#getting-started-with-uv)
-- [JSON Introduction](#json-introduction)
-- [File Organization & Modules](#file-organization--modules)
-- [Base Classes](#project-base-classes)
-- [Device Class](#device-class)
-- [Sensor Class](#sensor-class)
-- [Actuator Class](#actuator-class)
-- [Sensors & Actuator SubClasses (Temperature, Humidity, SmartLight)](#sensors--actuator-subclasses)
-- [Storage Management](#storage-management)
-- [Smart Home](#smart-home)
-- [Main Application](#main-application)
-- [Managing Types in Python](#managing-types-in-python)
+- **[`03-smart-home/`](03-smart-home/)** — the OOP capstone: a Smart Home IoT case
+  study built incrementally, step by step, ending in a production-style `src/`
+  project layout — see its own [README](03-smart-home/README.md) for the scenario
+  and the full step-by-step walk-through.
+  - [`step-1-devices/`](03-smart-home/step-1-devices/)
+  - [`step-2-data-manager/`](03-smart-home/step-2-data-manager/)
+  - [`step-3-smart-home/`](03-smart-home/step-3-smart-home/)
+  - [`step-4-patterns/`](03-smart-home/step-4-patterns/)
+  - [`step-5-src-layout/`](03-smart-home/step-5-src-layout/)
+
+- **[`04-networking/`](04-networking/)** — UDP/TCP sockets and JSON-over-TCP,
+  refactored to use the best practices above — see its own
+  [README](04-networking/README.md).
+  - [`udp/`](04-networking/udp/)
+  - [`tcp/`](04-networking/tcp/)
+  - [`json/`](04-networking/json/)
 
 
-## Getting Started with uv
+Nothing here needs a third-party package except two spots that need `PyYAML` —
+see [Setup](#setup).
 
-The project is managed with [uv](https://docs.astral.sh/uv/), a fast Python package and project manager.
-uv takes care of installing the correct Python version, creating the virtual environment (`.venv`) and installing the project.
+---
 
-Install uv (see the [official guide](https://docs.astral.sh/uv/getting-started/installation/) for other options):
+## Setup
+
+Python **3.10+** is required (the examples use `X | None` type-hint syntax).
+
+### 1. Check your Python version(s)
+
+**Linux / macOS**
 
 ```bash
-# macOS / Linux
-curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# Windows (PowerShell)
-powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+python3 --version           # version of the default python3
+which -a python3            # every python3 on your PATH
 ```
 
-Then, from the root of the repository:
+List each installed minor version:
 
 ```bash
-# Create the virtual environment and install the project (and the Python version in .python-version if missing)
-uv sync
-
-# Run the Smart Home application through the script entry point defined in pyproject.toml
-uv run smart-home
-
-# ...or equivalently, run the main module
-uv run python -m smart_home.main
+ls /usr/bin/python3.*                                        # Linux (system)
+ls /opt/homebrew/bin/python3.* /usr/local/bin/python3.* 2>/dev/null   # macOS (Homebrew)
+pyenv versions                                               # if you use pyenv (any OS)
 ```
 
-The main project files are:
+**Windows — PowerShell or cmd.exe**
 
-- `pyproject.toml`: project metadata (name, version, required Python version, dependencies) and the `smart-home` command mapped to the `main()` function in `src/smart_home/main.py`.
-- `.python-version`: the Python version used by uv for this project.
-- `uv.lock`: the lock file with the exact resolved dependencies. It is generated by uv, should be committed, and never edited by hand.
-
-To add a dependency in the future use `uv add <package>` (e.g., `uv add requests`) and uv will update both `pyproject.toml` and `uv.lock`.
-
-## JSON Introduction
-
-In this playground every device describes itself and reports its measurements (or its status for actuators) as a
-**JSON string**, created with Python's built-in `json` module (`json.dumps()`). These JSON strings are what the
-`StorageManager` stores and what the `SmartHome` returns when asked for device descriptions and measurements.
-
-If you are new to JSON, or you want a quick refresher on its syntax and on the `json` module (`load`, `dump`, `loads`, `dumps`),
-read the dedicated guide: **[JSON Introduction](docs/json.md)**. It also includes a summary of the JSON structures used by the
-Smart Home classes.
-
-## File Organization & Modules
-
-To organize your classes and files into different folders, the project follows the standard **`src` layout** used by uv
-(and by modern Python packaging tools). All the source code lives in a single package called `smart_home`, placed inside
-the `src/` folder, and it is organized into sub-packages (directories) based on their functionality:
-
-```text
-python-oop-playground/
-├── docs/
-│   └── json.md                     # JSON introduction
-├── src/
-│   └── smart_home/                 # Main Python package
-│       ├── __init__.py
-│       ├── main.py                 # Application entry point (main() function)
-│       ├── data/
-│       │   ├── __init__.py
-│       │   └── storage_manager.py
-│       ├── devices/
-│       │   ├── __init__.py
-│       │   ├── device.py
-│       │   ├── sensor.py
-│       │   ├── actuator.py
-│       │   ├── temperature_sensor.py
-│       │   ├── humidity_sensor.py
-│       │   └── smart_light.py
-│       └── home/
-│           ├── __init__.py
-│           └── smart_home.py
-├── .python-version                 # Python version used by uv
-├── pyproject.toml                  # Project configuration
-├── uv.lock                         # Lock file generated by uv
-└── README.md
+```bat
+py --version
+py --list
+where python
 ```
 
-Keeping the code inside `src/` prevents Python from accidentally importing the modules directly from the project folder:
-the code is always imported from the installed `smart_home` package (installed by `uv sync`), exactly as a user of the project would do.
+`py --version` shows the version the launcher picks by default; `py --list`
+shows every Python version installed on the machine; `where python` shows the
+paths.
 
-The `__init__.py` file is used to mark a directory as a Python package. 
-This allows you to import modules from that directory. 
-Here are the main reasons why you need an `__init__.py` file:  
+If the default is below 3.10, install a newer one
+(<https://www.python.org/downloads/> · Linux: your package manager · macOS:
+`brew install python@3.12`). You can then aim `venv` at a specific version:
+`python3.12 -m venv .venv` (Linux/macOS) or `py -3.12 -m venv .venv` (Windows).
 
-- **Package Initialization:** It can be used to execute initialization code for the package or set the __all__ variable to control what is imported when from package import * is used.  
-- **Namespace Management:** It helps in managing the namespace of the package, ensuring that the modules within the package can be imported correctly.  
-- **Compatibility:** In older versions of Python (before 3.3), the presence of __init__.py was required to recognize a directory as a package. Although it is not strictly necessary in Python 3.3 and later, it is still a good practice to include it for compatibility and clarity.
+### 2. Create and activate a virtual environment
 
-Import statements have to reflect the directory structure. When importing a module from a different sub-package
-you should use an absolute import starting from the package name `smart_home`.
-For example in the `main.py` we have the following imports:
+A virtual environment is a private, isolated copy of Python and its packages for
+this project only, so nothing is installed into the system Python. Create it
+once, **at the repo root**:
 
-```python
-from smart_home.data.storage_manager import StorageManager
-from smart_home.home.smart_home import SmartHome
-from smart_home.devices.smart_light import SmartLight
+**Linux / macOS**
 
-[...]
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
 ```
 
-If you have an import from a different class within the same directory you should use a relative import
-like the following statement: 
+**Windows — PowerShell**
 
-```python
-from .device import Device
+```powershell
+py -m venv .venv
+.venv\Scripts\Activate.ps1
 ```
 
-## Project Base Classes
+> If PowerShell blocks the script, run once:
+> `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`
 
-The basic classes are:
+**Windows — cmd.exe**
 
-- `Device`: Base class for all devices defining the following attributes for all the devices such as sensors and actuators subclasses:
-  - `device_id`: Id of the device
-  - `device_type`: Type of the device
-  - `device_manufacturer`: Manufacturer of the device
-  - The Device class defines two core method that will be inherited by every subclasses: 
-    - `get_json_measurement`: Returns a JSON representation of the Status of the device (e.g., the last measurement o the last state of an actuator). This method should be implemented by subclasses.
-    - `get_json_description`: Returns a JSON representation of the Device. The Device class already provide a default implementation that can be applied to every device and subclasses (e.g., Sensor and Actuator)
-- `Sensor`: Base class for all sensors extending `Device` class and adding: 
-  - Methods:
-    - `update_measurement()`: update the sensor value. The default implementation throws a `NotImplementedError` exception and the subclasses must implement it. 
-  - Attributes:
-    - `value`: associated to the current sensor value
-    - `unit`: mapping the unit associated to the physical measurement type
-    - `timestamp` of the last sample in milliseconds
-- `Actuator`: Base class for all actuators extending `Device` class and adding:
-  - Methods:
-    - `invoke_action(action_type, payload)`: method to trigger an action on the actuator specifying the type of action and the payload (e.g., action_type = "switch" and payload = "ON").
-  - Attributes:
-    - `status`: associated to the current status of the actuator
-    - `timestamp` of the last action in milliseconds
-
-## Device Class
-
-The Device class has the following structure with a constructor to initialize the Device instance and two methods
-related to Json description of the device and the associated last measurement.
-
-```python
-import json
-
-class Device:
-    """ Base class for devices """
-
-    def __init__(self, device_id, device_type, device_manufacturer):
-        """ Initialize the devices with a devices ID and a devices type """
-        self.device_id = device_id
-        self.device_type = device_type
-        self.device_manufacturer = device_manufacturer
-
-    def get_json_measurement(self):
-        """ Returns a JSON representation of the Status of the device (e.g., the last measurement) """
-        raise NotImplementedError("This method should be overridden by subclasses")
-
-    def get_json_description(self):
-        """ Returns a JSON representation of the Device """
-
-        result_dict = {
-            "device_id": self.device_id,
-            "device_type": self.device_type,
-            "device_manufacturer": self.device_manufacturer
-        }
-
-        return json.dumps(result_dict)
+```bat
+py -m venv .venv
+.venv\Scripts\activate.bat
 ```
 
-The method `get_json_measurement()` is not implemented since depends on the characteristics of the specific subclass
-like `Sensor` that returns last measurements (e.g., Temperature) or `Actuator` that instead return the last state.
+Your prompt now shows `(.venv)`. Run `deactivate` at any time to return to the
+system Python. The `.venv/` folder is git-ignored — never commit it.
 
-On the opposite, the method `get_json_description()` provides a default implementation describing the device in 
-terms of its `id`, `type`, and `manufacturer`. This implementation is usable by every subclass but of course it can 
-be overridden in order to customize or extend the behaviour.
+### 3. Install the dependencies
 
-## Sensors & Actuator Classes
-
-The main two Subclasses for Device are `Sensor` and `Actuator` with the following structure
-
-### Sensor Class
-
-The `Sensor` class has the responsibility to map the properties and behaviours of the Sensors in our system and application.
-
-```python
-from .device import Device
-import json
-
-class Sensor(Device):
-    """ Base class for sensors """
-
-    def __init__(self, device_id, device_type, device_manufacturer):
-        """ Initialize the sensor with a devices ID, a devices type """
-        super().__init__(device_id, device_type, device_manufacturer)
-
-        # Initialize the measurement value to None and the timestamp
-        # Subclasses should override the update_measurement method to set the value
-        self.value = None
-
-        # Set the timestamp to None, subclasses should set the timestamp when updating the measurement
-        self.timestamp = None
-
-        # Set the Unit associated to sensor measurements
-        self.unit = None
+```bash
+pip install -r requirements.txt
 ```
 
-Then we declare and add a new method `update_measurement` in charge of structuring how each specific sensor model
-the measuring of its new values. For this reason this method is empty and should be overridden by subclasses.
+- [`requirements.txt`](requirements.txt) is the **recipe** (which packages, which
+  versions); the `.venv/` folder is the disposable **kitchen** built from it. If
+  `.venv/` ever breaks, delete it and recreate it from the recipe.
+- `pip freeze > requirements.txt` regenerates the file after adding a package.
+- `pyproject.toml` is a richer, modern alternative for declaring dependencies —
+  not used anywhere in this repo, which deliberately stays on `requirements.txt`
+  end to end (`03-smart-home/step-5` included).
 
-```python
-def update_measurement(self):
-    """ Update the measurement of the sensor, this method should be overridden by subclasses """
-    raise NotImplementedError("This method should be overridden by subclasses")
+### What actually needs the dependencies
+
+Only two spots (`01-best-practices/04-config` YAML demo and `03-smart-home/step-5`).
+Everything else is standard-library only and runs directly:
+
+```bash
+cd 02-oop/05-inheritance
+python3 main.py
 ```
 
-On the other hand, the implementation of the `get_json_measurement` can be integrated in the `Sensor` class and then
-inherited by Sensors subclasses defining how sensor measurements are reported as JSON String.
-
-```python
-def get_json_measurement(self):
-    """ Returns a JSON Measurement of the humidity sensor """
-    result_dict = {
-        "device_id": self.device_id,
-        "value": self.value,
-        "unit": self.unit,
-        "timestamp": self.timestamp
-    }
-
-    return json.dumps(result_dict)
-```
-
-### Actuator Class
-
-The `Actuator` class has the responsibility to map the properties and behaviours of the Actuator in our system and application.
-
-```python
-from .device import Device
-import json
-
-class Actuator(Device):
-    """ Base class for actuators """
-
-    def __init__(self, device_id, device_type, device_manufacturer):
-        """ Initialize the actuator with a devices ID and a devices type """
-        super().__init__(device_id, device_type, device_manufacturer)
-
-        # Initialize the status to None, subclasses should set the status when needed
-        self.status = "off"
-
-        # Set the timestamp to None, subclasses should set the timestamp when updating the status
-        self.timestamp = None
-```
-
-With the following method `invoke_action` we model the behaviour of an Actuator that can receive and action request
-and execute it starting from a `type` and a `payload` containing the detail of the action (e.g., `ON` and `OFF`).
-In this case since this class is generic, this method is not implemented and should be overridden by subclasses.
-
-```python
-def invoke_action(self, action_type, payload):
-    """ Invoke an action on the actuator """
-    raise NotImplementedError("This method should be overridden by subclasses")
-```
-
-The 
-
-```python
-def get_json_measurement(self):
-    """ Returns a JSON Measurement of the humidity sensor """
-    result_dict = {
-        "device_id": self.device_id,
-        "status": self.status,
-        "timestamp": self.timestamp
-    }
-
-    return json.dumps(result_dict)
-```
-
-## Sensors & Actuator SubClasses
-
-Starting from the base classes, we have the following subclasses:
-
-- `TemperatureSensor`: A sensor that measures temperature extending `Sensor` class and mapping a default initial value of 20.0, unit of Celsius, a timestamp of the last sample in milliseconds.
-   , the random value is generated between 20 and 30 degrees with a random increment between -0.5 to 0.5 degrees.
-- `HumiditySensor`: A sensor that measures humidity extending `Sensor` class and mapping a default initial value of 50.0, unit of percentage, a timestamp of the last sample in milliseconds.
-   , the random value is generated between 40% and 60% percentage with a random increment between -5% to 5%.
-- `SmartLight`: An actuator that can be turned on or off extending `Actuator` class and mapping a default initial status of `OFF`, a timestamp of the last action in milliseconds. The `invoke_action(action_type, payload)`
-   method check the received action type and if it supported (`SWITCH` value) together with the correct value of the payload (`ON` or `OFF`) change the current value of the actuator and align the associated timestamp.
-
-### Temperature Sensor Class
-
-The Temperature Sensor class extends the `Sensor` class and implements both the init logic and the `update_measurement` method to generate random temperature values between 20 and 30 degrees with a random increment between -0.5 to 0.5 degrees.
-The init method sets the initial temperature to 20 degrees, the unit to Celsius and the timestamp to the setup instance in milliseconds.
-
-```python
-class TemperatureSensor(Sensor):
-    """ Temperature sensor class, extends Sensor class implementing get_status method """
-
-    CELSIUS_UNIT = "C"
-
-    def __init__(self, device_id, initial_temperature=20):
-        """ Initialize the temperature sensor with a devices ID and an initial temperature """
-        super().__init__(device_id, "TemperatureSensor", "Acme Inc.")
-
-        # Initialize the temperature measurement
-        self.value = initial_temperature
-
-        # Set the timestamp of the last measurement in milliseconds
-        self.timestamp = int(time.time() * 1000)
-
-        # Set the Temperature Sensor Unit to Celsius
-        self.unit = TemperatureSensor.CELSIUS_UNIT
-```
-
-The `update_measurement` method generates a random temperature value between 20 and 30 degrees with a random increment between -0.5 to 0.5 degrees.
-
-```python
-  def update_measurement(self):
-      """ Update the temperature measurement of the sensor in a range of 20 to 30 degrees with a random increment """
-
-      # Update the temperature measurement with a random increment or decrement
-      is_increment_decrement = random() > 0.5
-
-      if is_increment_decrement:
-          self.value -= random() - 0.5
-      else:
-          self.value += random() - 0.5
-
-      # Set the timestamp of the last measurement in milliseconds
-      self.timestamp = int(time.time() * 1000)
-```
-
-### Humidity Sensor Class
-
-The Humidity Sensor class extends the `Sensor` class and implements both the init logic and the `update_measurement` method to generate random humidity values between 40% and 60% with a random increment between -5% to 5%.
-The init method sets the initial humidity to 50%, the unit to percentage and the timestamp to the setup instance in milliseconds.
-
-```python
-import time
-from .sensor import Sensor
-from random import random
-
-
-class HumiditySensor(Sensor):
-    """ Humidity sensor class, extends Sensor class implementing required methods defined in the Sensor Class """
-
-    # Relative Humidity % Unit
-    HUMIDITY_UNIT = "%RH"
-
-    def __init__(self, device_id, initial_humidity=50):
-        """ Initialize the humidity sensor with a devices ID and an initial humidity level """
-        super().__init__(device_id, "HumiditySensor", "Acme Inc.")
-
-        # Initialize the humidity measurement
-        self.value = initial_humidity
-
-        # Set the timestamp of the last measurement in milliseconds
-        self.timestamp = int(time.time() * 1000)
-
-        # Set Humidity Unit to Relative Humidity % Unit
-        self.unit = HumiditySensor.HUMIDITY_UNIT
-```
-The `update_measurement` method generates a random humidity value between 40% and 60% with a random increment between -5% to 5%.
-
-```python
-def update_measurement(self):
-    """ Update the humidity measurement of the sensor in a range of 40% to 60% with a random increment """
-
-    # Update the humidity measurement with a random increment or decrement
-    is_increment_decrement = random() > 0.5
-
-    if is_increment_decrement:
-        self.value += 10 * (random() + 0.5)
-    else:
-        self.value -= 10 * (random() + 0.5)
-
-
-    # Set the timestamp of the last measurement in milliseconds
-    self.timestamp = int(time.time() * 1000)
-```
-
-### Smart Light Actuator Class
-
-The Smart Light class extends the `Actuator` class and implements both the init logic and the `invoke_action` method to switch the light on or off.
-The init method sets the initial status to `OFF` and the timestamp to the setup instance in milliseconds.
-
-```python
-from .actuator import Actuator
-import time
-
-class SmartLight(Actuator):
-    """ Class representing a smart light devices """
-
-    # Static Class's attributes used to define action types and values
-    STATUS_ON = "ON"
-    STATUS_OFF = "OFF"
-    ACTION_TYPE_SWITCH = "SWITCH"
-
-    def __init__(self, device_id):
-        """ Initialize the smart light with a devices ID and an initial state """
-        super().__init__(device_id, "SmartLight", "Acme Inc.")
-
-        # Set the initial state of the smart light to off
-        self.status = SmartLight.STATUS_OFF
-
-        # Set the timestamp to None, subclasses should set the timestamp when updating the status
-        self.timestamp = int(time.time() * 1000)
-```
-
-The `invoke_action` method checks the received action type and if it supported (`SWITCH` value) together with the correct value of the payload (`ON` or `OFF`) change the current value of the actuator and align the associated timestamp.
-The method checks if the action type is `SWITCH` and the payload is `ON` or `OFF` and then updates the status of the actuator.
-
-```python
-def invoke_action(self, action_type, payload):
-    """ Invoke an action on the smart light """
-
-    # Check if action_type Type and payload are Strings
-    if not isinstance(action_type, str) or not isinstance(payload, str):
-        raise ValueError("Action type and payload must be strings")
-
-    # Check the action type and payload
-    if action_type.upper() == SmartLight.ACTION_TYPE_SWITCH and payload.upper() in [SmartLight.STATUS_ON, SmartLight.STATUS_OFF]:
-        self.status = payload
-    else:
-        raise ValueError("Unsupported action type")
-```
-
-## Storage Management
-
-The class `StorageManager` has been defined to shape how data are stored in the application, to centralize the associated methods and 
-_hide_ how data and information are effectively stored by the class itself.
-
-The actual implementation has the following main capabilities:
-
-- **Device Description Storage**: allows to store and retrieve Devices for the Smart Home through dedicated method. The adopted data structure is a `list` of devices.
-- **Device Json Measurement Storage**: supports the saving and retrieval of sensor measurements and actuator variations over time.
-
-Implemented and supported methods are:
-
-- `store_device_description(self, device_id, device_description)`: store a device description in the storage
-- `remove_device_description(self, device_id)`: remove a device description from the storage
-- `get_device_description(self, device_id)`: get a device description from the storage
-- `get_all_device_descriptions(self)`: get all device descriptions from the storage
-- `store_measurement(self, device_id, measurement)`: store a measurement in the storage
-- `get_measurements(self, device_id)`: get all measurements for a device from the storage
-- `get_all_measurements(self)`: get all measurements from the storage
-
-The constructor initializes two dictionaries to store the device descriptions and the device measurements.
-
-```python
-class StorageManager:
-    """ Class to manage the data storage of the smart home """
-
-    def __init__(self):
-        """ Initialize the data manager with an empty dictionary to store sensor data """
-        self.device_description_dict = {}
-        self.device_measurement_dict = {}
-```
-
-The methods to handle the device descriptions are the following:
-
-```python
-def store_device_description(self, device_id, device_description):
-    """ Store a new device description """
-    self.device_description_dict[device_id] = device_description
-
-def remove_device_description(self, device_id):
-    """ Remove a stored device description """
-    if device_id in self.device_description_dict.keys():
-        del self.device_measurement_dict[device_id]
-
-def get_device_description(self, device_id):
-    """ Get a device description by its ID """
-    if device_id in self.device_description_dict.keys():
-            return self.device_description_dict[device_id]
-    else:
-        return None
-
-def get_all_device_descriptions(self):
-    """ Return all the device Descriptions """
-    return self.device_description_dict
-```
-
-On the other hand, the methods to handle the device measurements are the following:
-
-```python
-def store_measurement(self, device_id, measurement):
-    """ Store a measurement for a devices. It can be associated both a variation of a Sensor or a status change in an actuator """
-    if device_id not in self.device_measurement_dict:
-        self.device_measurement_dict[device_id] = []
-    self.device_measurement_dict[device_id].append(measurement)
-
-def get_measurements(self, device_id):
-    """ Get all measurements for a specific devices """
-    return self.device_measurement_dict.get(device_id, [])
-
-# Get all measurements for all devices
-def get_all_measurements(self):
-    """ Get all measurements for all devices """
-    return self.device_measurement_dict
-```
-
-## Smart Home
-
-The Smart Home class is in charge of the following responsibilities: 
-
-- **Device Management**: Exposes the capabilities to manage devices (`add`, `remove`, and `get`) hiding the fact that it is also using an instance of the `StorageManager` to do that.
-- - **Home Monitoring**: Implements a method to emulate the `monitoring` of the Smart Home that periodically check and update sensors measurements and randomly change actuators status and then store variation on through the `StorageManager`.
-- **Measurement Service**: Exposes stored measurements associated to both sensors and actuators hiding the fact that it is using an instance of the `StorageManager` to do that.
-
-
-The `SmartHome` constructor receives the `StorageManager` instance and the `home_id` and the `latitude` and `longitude` of the Smart Home.
-Then initializes a dictionary to store active devices that have been added and managed by to the Smart Home.
-
-```python
-import time
-from random import random
-
-from smart_home.devices.device import Device
-from smart_home.devices.sensor import Sensor
-from smart_home.devices.smart_light import SmartLight
-
-
-class SmartHome:
-    """ Smart home class that manages devices and data """
-
-    def __init__(self, storage_manager, home_id, latitude, longitude):
-        """Initialize the smart home with an empty list of devices and a data manager """
-        self.data_manager = storage_manager
-        self.home_id = home_id
-        self.latitude = latitude
-        self.longitude = longitude
-
-        # Initialize the internal structure for managing device references
-        self.device_dict = {}
-```
-
-Then device management methods are implemented to add, remove, and get devices from the Smart Home.
-
-```python
-def add_device(self, device):
-  """ Add a new devices to the smart home """
-
-  # If the Class type is correct
-  if isinstance(device, Device):
-    # Add the Device to the internal structure
-    self.device_dict[device.device_id] = device
-
-    # Save the Device Description through the Data Manager
-    self.storage_manager.store_device_description(device.device_id, device.get_json_description())
-  else:
-    raise TypeError("Expected Device Class ! Error a different type has been provided !")
-
-
-def remove_device(self, device_id):
-  """ Remove a devices from the smart home """
-
-  if device_id in self.device_dict.keys():
-    ## Remove the device from the internal structure and from the storage
-    del self.device_dict[device_id]
-    self.storage_manager.remove_device_description(device_id)
-  else:
-    print(f'Warning ! Device with Id: {device_id} not found ... nothing to remove')
-
-
-def get_device(self, device_id):
-  """ Get a devices by its ID """
-  if device_id in self.device_dict.keys():
-    return self.device_dict[device_id]
-  else:
-    return None
-
-
-def get_all_devices(self):
-  """ Get all devices in the smart home """
-  return self.device_dict
-
-
-def get_all_device_descriptions(self):
-  """ Return all the stored Device Descriptions """
-  return self.storage_manager.get_all_device_descriptions()
-```
-
-The SmartHome has also a method to exposes the collected measurements of the devices managed by the Smart Home through 
-the internal usage of the Storage Manager.
-
-```python
-def get_all_measurements(self):
-  """ Get all measurements for all devices """
-  return self.storage_manager.get_all_measurements()
-```
-
-The core method of the Smart Home is the `monitor_home` that emulates the monitoring of the Smart Home that periodically check and update sensors measurements and randomly change actuators status and then store variation on through the `StorageManager`.
-
-```python
-def monitor_home(self, seconds=5):
-  """ Monitor the smart home for a given number of seconds """
-
-  # Iterate 5 times over the list of devices and update the measurements or trigger actions every 2 seconds
-  for _ in range(seconds):
-    # Wait for 2 seconds
-    print("\nWaiting for 1 seconds...")
-    time.sleep(1)
-
-    for device in self.get_all_devices().values():
-
-      # Here we can check if the devices is a sensor and update the measurement with Sensor base class
-      if isinstance(device, Sensor):
-        print(f"Updating measurement for devices {device.device_id} ...")
-        device.update_measurement()
-        self.storage_manager.store_measurement(device.device_id, device.get_json_description())
-
-      # Here we check explicitly for the SmartLight class since the payload is different and custom
-      elif isinstance(device, SmartLight):
-
-        # Flip a coin and decide to switch the light on or off
-        random_value = random()
-
-        # If random value is greater than 0.5 change the state of the light
-        if random_value > 0.5:
-
-          original_status = device.status
-
-          print(f"Changing Actuator Status: {device.device_id} ...")
-          if device.status == SmartLight.STATUS_ON:
-            device.invoke_action(SmartLight.ACTION_TYPE_SWITCH, SmartLight.STATUS_OFF)
-          else:
-            device.invoke_action(SmartLight.ACTION_TYPE_SWITCH, SmartLight.STATUS_ON)
-
-          new_device_status = device.status
-
-          print(f"Device {device.device_id} status changed from {original_status} to {new_device_status}")
-
-          # Store Actuation change as Measurement
-          self.storage_manager.store_measurement(device.device_id, device.get_json_description())
-```
-
-## Main Application
-
-The `src/smart_home/main.py` file is the entry point of the application. Its `main()` function creates a Smart Home instance and adds some devices to it.
-It also starts the monitoring of the Smart Home and prints the measurements of the devices.
-
-The `main()` function is registered as the `smart-home` command in the `[project.scripts]` section of `pyproject.toml`,
-so the application can be started with `uv run smart-home` (see [Getting Started with uv](#getting-started-with-uv)).
-
-```python
-    # Create the smart home
-my_smart_home = SmartHome(StorageManager(), "SH001", 37.7749, -122.4194)
-
-# Add devices
-temp_sensor = TemperatureSensor(device_id=1)
-humidity_sensor = HumiditySensor(device_id=2)
-smart_light = SmartLight(device_id=3)
-
-my_smart_home.store_device_description(temp_sensor)
-my_smart_home.store_device_description(humidity_sensor)
-my_smart_home.store_device_description(smart_light)
-
-# Get Initial Status of all devices
-print("\nInitial Status of IoT Devices:")
-for device in my_smart_home.get_all_devices():
-  # Check if the devices is a sensor or an actuator and print the value or the status
-  if isinstance(device, Sensor):
-    print(f'Sensor: {device.device_id} Value: {device.value} Timestamp: {device.timestamp}')
-  elif isinstance(device, Actuator):
-    print(f'Actuator: {device.device_id} Value: {device.status} Timestamp: {device.timestamp}')
-
-# Monitor the smart home for 5 seconds
-my_smart_home.monitor_home(seconds=5)
-
-# Get all stored measurements
-measurements = my_smart_home.get_all_measurements()
-print("\nStored Measurements:")
-for device_id, device_measurements in measurements.items():
-  for measurement in device_measurements:
-    print(f"Device {device_id} - Measurement: {measurement}")
-
-# Print Json Description of all devices
-print("\nJson Description of all devices:")
-for device in my_smart_home.get_all_devices():
-  print(device.get_json_description())
-```
-
-## Managing Types in Python
-
-Python is a dynamically typed language, but it supports type hints which can be used to indicate the types of variables, function parameters, and return values. 
-These hints are not enforced at runtime but can help with code readability and tooling support.
-
-Making a comparison with another programming language like Java, Python is a dynamically typed language, which means that the type of a variable is determined at runtime.
-On the other hand, Java is a statically typed language, which means that the type of a variable is determined at compile time.
-
-Main differences can be (briefly) summirized as follows:
-
-**Python**:
-- Dynamic Typing: Variables do not need to be declared with a type, and their type can change at runtime.
-- Type Hints: Optional type hints can be used for better code clarity and tooling support but are not enforced at runtime.
-
-**Java**:
-- Static Typing: All variables must be declared with a type, and their type cannot change at runtime.
-- Type Enforcement: The type of variable is enforced by the compiler at compile-time.
-
-**In summary, Python's dynamic typing provides more flexibility, whereas Java's static typing offers more type safety and early error detection. 
-Type hints in Python can bridge some of the gap by providing optional type information without losing the flexibility of dynamic typing.**
-
-### Type Hints for Functions
-
-Type hints can be used to specify the expected types of function parameters and return values.
-
-```python
-def greet(name: str) -> str:
-    return f"Hello, {name}!"
-```
-
-In this example, the `name` parameter is expected to be a string, and the return value is also expected to be a string.
-
-Example with Multiple Parameters and Return Types:
-
-```python
-def add(a: int, b: int) -> int:
-    return a + b
-
-def concatenate(strings: list[str]) -> str:
-    return ' '.join(strings)
-```
-
-Here, `add` expects two integers and returns an integer, while `concatenate` expects a list of strings and returns a single concatenated string.
-
-### Type Hints for Classes
-
-Type hints can also be used in classes to indicate the types of attributes and the types of method parameters and return values.
-
-```python
-from typing import List
-
-class Person:
-    def __init__(self, name: str, age: int):
-        self.name: str = name
-        self.age: int = age
-    
-    def greet(self) -> str:
-        return f"Hello, my name is {self.name} and I am {self.age} years old."
-    
-    def add_friends(self, friends: List[str]) -> None:
-        self.friends: List[str] = friends
- ```
-
-In the Person class, the `__init__` method initializes `name` and `age` attributes with type hints.
-The `greet` method returns a string, and the `add_friends` method takes a list of strings as a parameter and returns nothing (None).
-
-### Declaring Variable Types
-
-You can also specify the types of variables outside of functions and classes.
-
-```python
-age: int = 25
-name: str = "Alice"
-is_student: bool = True
-scores: list[int] = [85, 90, 78]
-```
-
-In these examples, `age` is an integer, `name` is a string, `is_student` is a boolean, and scores is a list of integers.
-
-### Using Type Aliases
-
-For complex types, you can create type aliases to simplify your code.
-Probably in some cases is better to use a class instead of a type alias in order to have a more structured code with
-parameters and behaviours for involved entities.
-
-```python
-from typing import Dict, Tuple
-
-Coordinates = Tuple[float, float]
-UserInfo = Dict[str, str]
-
-location: Coordinates = (40.7128, -74.0060)
-user: UserInfo = {"name": "Alice", "email": "alice@example.com"}
-```
-
-Here, Coordinates is a type alias for a tuple of two floats, and UserInfo is a type alias for a dictionary with string keys and string values.
-
-### Possible Variable Types in Python
-
-Here are some examples of possible variable types in Python:
-
-- `int`: Integer
-- `float`: Floating-point number
-- `str`: String
-- `bool`: Boolean
-- `list`: List of elements
-- `tuple`: Immutable sequence
-- `dict`: Dictionary (key-value pairs)
-- `set`: Set of unique elements
-- `None`: Special constant representing the absence of a value
-
-**In this playground, type hints have been only mentioned in this README in order to present a more structured code
-and give you and idea of how to use them in your Python projects. In future projects and examples they might be integrated
-in the code to provide a more structured and clear code, so please refer to this section for a brief overview of how to use them.**
+---
+
+## Running in VS Code
+
+The examples run from any editor, but VS Code adds one-click run and a debugger.
+
+1. **Install the Python extension** (`ms-python.python`). It pulls in Pylance
+   (autocomplete + type-checking, which reads the hints throughout this repo) and
+   the debugger.
+2. **Point VS Code at the virtual environment**: `Ctrl+Shift+P` →
+   **Python: Select Interpreter** → pick the one inside `.venv`:
+   - Linux / macOS: `./.venv/bin/python`
+   - Windows: `.venv\Scripts\python.exe`
+
+   VS Code usually lists it at the top as `('.venv')`. The choice is saved per
+   workspace and shown in the status bar; new integrated terminals then
+   auto-activate the venv (you see `(.venv)` in the prompt), and Pylance resolves
+   `PyYAML` and friends from it.
+3. **Run**: open any `main.py` and click ▶ *Run Python File* (top-right) or press
+   `Ctrl+F5`. These multi-folder examples (`from car import Car`) work with no
+   extra config — Python automatically adds the script's own folder to `sys.path`.
+4. **Debug**: click in the gutter left of a line number to set a breakpoint,
+   press `F5`, and choose **Python File** the first time. You get the variables
+   pane, call stack, watch, and step controls (`F10` step over, `F11` step into).
