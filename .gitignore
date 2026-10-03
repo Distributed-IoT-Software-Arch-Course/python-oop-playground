@@ -148,3 +148,9 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
+
+# macOS
+.DS_Store
+
+# Claude Code
+.claude/

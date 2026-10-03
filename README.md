@@ -4,16 +4,17 @@
 <!-- omit in toc -->
 ## Lecture Information
 
-| **Master's Degree** | Intelligent Internet of Things (D.M.270/04)                                      |
+| **Master's Degree** | Distributed IoT Software Architectures (D.M.270/04)                              |
 |---------------------|----------------------------------------------------------------------------------|
-| **Course**          | Intelligent Internet of Things                                                   |
+| **Course**          | Distributed IoT Software Architectures                                           |
 | **Lecture Title**   | Python Playground — Python Best Practices, OOP & Use Case Modelling              |
 | **Author**          | Prof. Marco Picone (marco.picone@unimore.it)                                     |
 | **License**         | [Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/) | 
 
 A practical, run-it-live Python learning playground: small, self-contained
 examples organized into progressive tracks, one concept per folder. Every
-`main.py` docstring states what it demonstrates and what to look at while it runs.
+script's module docstring states what it demonstrates, how to run it, and what to
+look at while it runs.
 
 ## Playground structure
 
@@ -47,14 +48,6 @@ examples organized into progressive tracks, one concept per folder. Every
   - [`step-3-smart-home/`](03-smart-home/step-3-smart-home/)
   - [`step-4-patterns/`](03-smart-home/step-4-patterns/)
   - [`step-5-src-layout/`](03-smart-home/step-5-src-layout/)
-
-- **[`04-networking/`](04-networking/)** — UDP/TCP sockets and JSON-over-TCP,
-  refactored to use the best practices above — see its own
-  [README](04-networking/README.md).
-  - [`udp/`](04-networking/udp/)
-  - [`tcp/`](04-networking/tcp/)
-  - [`json/`](04-networking/json/)
-
 
 Nothing here needs a third-party package except two spots that need `PyYAML` —
 see [Setup](#setup).
@@ -174,7 +167,7 @@ The examples run from any editor, but VS Code adds one-click run and a debugger.
    workspace and shown in the status bar; new integrated terminals then
    auto-activate the venv (you see `(.venv)` in the prompt), and Pylance resolves
    `PyYAML` and friends from it.
-3. **Run**: open any `main.py` and click ▶ *Run Python File* (top-right) or press
+3. **Run**: open any example script (e.g. a `main.py`) and click ▶ *Run Python File* (top-right) or press
    `Ctrl+F5`. These multi-folder examples (`from car import Car`) work with no
    extra config — Python automatically adds the script's own folder to `sys.path`.
 4. **Debug**: click in the gutter left of a line number to set a breakpoint,
